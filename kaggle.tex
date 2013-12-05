@@ -45,6 +45,7 @@ We wound up using a naive bayes classifier, a random forest, a support-vector ma
 boosted trees to predict defaults. We then fed those predictions to a genetic algorithm to do
 the ``intelligent" part and figure out how to best weight each prediction.
 	\subsection{Naive Bayes}
+	A simple algorithm we used to contribute to our final classification was a naive bayes classifier. It uses a strong assumptation that each class contributes independently to the final classification, and thus is "naive." For each data point it computes the posterior probability of the individual being in a certain class by taking the product of the prior probabilites and the likelihood functions of the data. It classifies the individual into the group with the highest posterior probability. The advantages of this algorithm is that it is computationally fast, and does not require a large training set. 
 	\subsection{Random Forest}
 	\subsection{Boosting}
 	Our final classifier in the ensemble is itself an ensemble learner. We made use of the
