@@ -1,12 +1,13 @@
 \documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\usepackage{setspace}
 \geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps� with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
-
+\doublespace
 \title{Kaggle my Baggle}
 \author{Alex Kellogg, Bill DeRose, Jacob Fiksel, Lingge Li}
 %\date{}							% Activate to display a given date or no date
@@ -32,13 +33,27 @@ Next, we observed a dependency between debt ratio and monthly income (the former
 	these quantitative values were used to code for qualitative values such as 
 	``failed to answer or ``not applicable". We simply replaced these observations with
 	\tt NA\rm~and let the imputation deal with the rest.
-	
-	Upon further inspection, we noted that some of the values for \tt RevolvingUtilizationOfUnsecuredLines
+	\begin{center}
+	\includegraphics[scale=0.5]{96}
+	\end{center}
 	\subsection{Imputation}
 \section{Classifiers}
+In general, we did not stick to a single classifier. We realized that for any classifier, there were myriad
+parameters that we could try to tweak to get things exactly as we wanted. Instead, we 
+opted to use the classifiers as they come``out-of-the-box" and combine results in an intelligent way. 
+We wound up using a naive bayes classifier, a random forest, a support-vector machine, and 
+boosted trees to predict defaults. We then fed those predictions to a genetic algorithm to do
+the ``intelligent" part and figure out how to best weight each prediction.
 	\subsection{Naive Bayes}
 	\subsection{Random Forest}
 	\subsection{Boosting}
+	Our final classifier in the ensemble is itself an ensemble learner. We made use of the
+	adaBoost algorithm which uses boosted regression trees. We used the \tt ada\rm~package
+	whose \tt ada\rm~function we used right out of the box. We played around with the types of
+	trees used to train the classifier. By default, the function uses random forests from the \tt rpart
+	\rm~library. We tried stumps and a few other types of trees and ultimately settled
+	on using trees with 16 terminal nodes. We did not make use of any cross-validation
+	to make this decision, but instead relied on empirical results.
 	\subsection{Genetic Algorithm}
 \section{Conclusions}
 

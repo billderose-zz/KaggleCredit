@@ -39,6 +39,8 @@ table(cs.training$NumberOfTime60.89DaysPastDueNotWorse)
 
 # TODO: check for more outliers like this:
 boxplot(cs.training$RevolvingUtilizationOfUnsecuredLines, horizontal = T)
+boxplot(cs.training$NumberOfTime30.59DaysPastDueNotWorse, horizontal = T, 
+        main = "Num. Times 30-59 Days Late")
 # boxplot of each variable. Note that 98/96 are the outliers for the categories
 # mentioned above.
 apply(cs.training, 2, boxplot)
@@ -89,7 +91,7 @@ Plot.Factor(all.obs[0:nrow(cs.training), ])
 # TODO: Someone should tweak the settings of this random forest to see if
 # it gives us any better predictions. May also consider how we weight predictions
 # this gives us and what boosting gives us.
-rf <- randomForest(as.factor(SeriousDlqin2yrs) ~ ., data = unskew.data)
+rf <- randomForest(as.factor(SeriousDlqin2yrs) ~ ., data = full.train)
 
 # Naive Bayes
 nb <- naiveBayes(as.factor(SeriousDlqin2yrs) ~ ., data = unskew.data)
@@ -121,11 +123,11 @@ boost.thirty  <- ada(as.factor(SeriousDlqin2yrs) ~ ., data = unskew.data,
                      control = thirty, iter = 100)
 
 
-boost.train.pred <- predict(boost.sixteen, full.train, type = "prob")
-forest.train.pred <- predict(rf, full.train, type = "prob" )
-bayes.train.pred <- predict(nb, full.train, type = "raw")
-all.pred <- data.frame(bayes.train.pred[, 2], forest.train.pred[ , 2], 
-                       boost.train.pred[ , 2])
+boost.train.pred <- predict(boost.sixteen, unskew.data, type = "prob")
+forest.train.pred <- predict(rf, unskew.data, type = "prob" )
+bayes.train.pred <- predict(nb, unskew.data, type = "raw")
+all.train.pred <- data.frame(bayes.train.pred[, 2], forest.train.pred[ , 2], 
+                             boost.train.pred[ , 2])
   
 # The fitness function for the genetic algorithm
 # calculates the AUC 
@@ -141,18 +143,18 @@ Fitness <- function(x, guess) {
 # The genetic algorithm finds the optimal weights
 # The range of w1,w2 is [0,0.5]
 # There are quite a few parameters we can play with
-GA <- ga(type = "real-valued",fitness = Fitness, maxiter = 10, guess = all.pred,
+GA <- ga(type = "real-valued",fitness = Fitness, maxiter = 10, guess = all.train.pred,
          min = c(0, 0, 0), max = c(1,1,1))
 summary(GA)
-weights <- c(0.6520063, 0.006869555, 0.3802973)
+weights <- c(0.8541686, 0.5544564, 0.3812073)
 weights <- weights / sum(weights)
 
 boost.test.pred <- predict(boost.sixteen, full.test, type = "prob")
 forest.test.pred <- predict(rf, full.test, type = "prob" )
 bayes.test.pred <- predict(nb, full.test, type = "raw")
-all.pred <- data.frame(bayes.test.pred[, 2], forest.test.pred[ , 2], 
-                       boost.test.pred[ , 2])
-final.test.pred <- as.matrix(all.pred) %*% weights
+all.test.pred<- data.frame(bayes.test.pred[, 2], forest.test.pred[ , 2], 
+                           boost.test.pred[ , 2])
+final.test.pred <- as.matrix(all.test.pred) %*% weights
 results <- data.frame(Id = 1:nrow(cs.test), Probability = final.test.pred)
 write.table(results, "imputed.csv", quote=F, row.names=F, sep=",")
 
