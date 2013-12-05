@@ -1,13 +1,12 @@
 \documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
-\usepackage{setspace}
 \geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
 %\geometry{landscape}                		% Activate for for rotated page geometry
 %\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps� with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
-\doublespace
+
 \title{Kaggle my Baggle}
 \author{Alex Kellogg, Bill DeRose, Jacob Fiksel, Lingge Li}
 %\date{}							% Activate to display a given date or no date
@@ -33,31 +32,21 @@ Next, we observed a dependency between debt ratio and monthly income (the former
 	these quantitative values were used to code for qualitative values such as 
 	``failed to answer or ``not applicable". We simply replaced these observations with
 	\tt NA\rm~and let the imputation deal with the rest.
-	\begin{center}
-	\includegraphics[scale=0.5]{96}
-	\end{center}
+	
+	Upon further inspection, we noted that some of the values for \tt RevolvingUtilizationOfUnsecuredLines
 	\subsection{Imputation}
-\section{Classifiers}
-In general, we did not stick to a single classifier. We realized that for any classifier, there were myriad
-parameters that we could try to tweak to get things exactly as we wanted. Instead, we 
-opted to use the classifiers as they come``out-of-the-box" and combine results in an intelligent way. 
-We wound up using a naive bayes classifier, a random forest, a support-vector machine, and 
-boosted trees to predict defaults. We then fed those predictions to a genetic algorithm to do
-the ``intelligent" part and figure out how to best weight each prediction.
+	Some individuals in the data set did not have values for certain values. Instead of ignoring blank values, and thus potentially ignoring values that could be key in classifying individuals, we decided to choose between two imputation methods: K-nearest neighbors imputation, and gradient boosting imputation. To evaluate the two methods, we focused on computation time and perceived accuracy of the methods. The K-Nearest Neighbor computes a distance matrix, and finds a speicifed number of closest observations to the individual you are imputing the data for. It then finds the mean of the variable you are imputing from those individuals. Unforunately, the algorithm in R was unable to compute a distance matrix for a data set of the size we are working with, which would force us to use much smaller subsets to impute the data, thus decreasing the accuracy of our imputations. Gradient boosting, the method that we used for our data, treats each missing value as a regression problem and uses boosting to create regression trees and predict the value as a weighted sum of the predictions. The weights are created to minimize a loss function, thus improving accuracy. While using regression to find missing values for our data set may not have been the best model, gradient boosting allowed us to use the training data to impute the missing values in the test data, and was significantly computationally less expensive than k-nearest neighbors imputation. 
 	\subsection{Naive Bayes}
 	A simple algorithm we used to contribute to our final classification was a naive bayes classifier. It uses a strong assumptation that each class contributes independently to the final classification, and thus is "naive." For each data point it computes the posterior probability of the individual being in a certain class by taking the product of the prior probabilites and the likelihood functions of the data. It classifies the individual into the group with the highest posterior probability. The advantages of this algorithm is that it is computationally fast, and does not require a large training set. 
 	\subsection{Random Forest}
 	\subsection{Boosting}
-	Our final classifier in the ensemble is itself an ensemble learner. We made use of the
-	adaBoost algorithm which uses boosted regression trees. We used the \tt ada\rm~package
-	whose \tt ada\rm~function we used right out of the box. We played around with the types of
-	trees used to train the classifier. By default, the function uses random forests from the \tt rpart
-	\rm~library. We tried stumps and a few other types of trees and ultimately settled
-	on using trees with 16 terminal nodes. We did not make use of any cross-validation
-	to make this decision, but instead relied on empirical results.
 	\subsection{Genetic Algorithm}
 \section{Conclusions}
-
-
+	All in all, this project was extremely enjoyable for all of us, and presented us with the challenge of analysing a vast array of data, and figuring out the best way to classify the data set as defaulters and non defaulters. Although the more successful methods were addresed in the various sections of this paper, we learned a lot of valuable lessons in our numerous errors.
+	One thing that comes to mind is our ever-changing perspective regarding the importance of the data. At first, we didn't pay much attention to the data we were dealing with, figuring that our classification methods would be able to sift through all the outliers and come to a reasonable estimate. However, after a quick set of box plots, we quickly changed our minds about the significance of our dataset, and went a little over the top by setting values of data that we found moderately sketchy to NA, or adjusting them down to "more reasonable" values. After testing our results, we learned that too much data manipulating was a bad thing, and we backed off a bit once more.
+	In terms of implementation of the code, this project gave us a great opportunity to work with a particularly interesting data set (at least compared to our usual set of randomly generated values). As a result, we had to really take computational feasibility into account (running KNNImputation, for instance, was ruled out under this criteria), which was new to most of us. Furthermore, learning to handle imported libraries proved to be an interesting challenge: for the majority of the work in this class, we had been implementing our own algorithms in R, and working with pre-made packages required a new sort of problem solving that we had to adjust to in order to get our classifiers and various methods up and running.
+	As a group, we are extremely pleased with our performance -- having jumped from around 600th place to 149th was an incredible leap made in just a couple of days! However, as we concluded coding, we realized that with more time, there were some additional things we would have liked to try. As previously mentioned, we believe that the values that we train our data on are extremely relevant to correct classification, and so one thing that we would have liked to focus a bit more energy on was imputation: although we are satisfied with how gmbImpute worked for us, when we scanned the imputed values of our data, we noticed some seemingly strange outputs. Clearly, we can't be sure that these imputed values were off, but when comparing them to KNNImpute (which, mind you, only could handle very small subsets of the data), we seemed to be able to better rationalize the KNNImpute data than the values we were using. 
+	We would also have liked to spend more time dealing with the skewness of our data. As was mentioned earlier, 96\% of our data was from non-defaulters. In dealing with this, we explained that we chose to make a vector of probabilities to give more weight to observations of defaulters. However, we chose these probabilities arbitrarily; in order to even our data up, we usually trained our classifiers on data that was split 60-40 between defaulters and non-defaulters. Thus, if we had more time, we would be interested in solving for the optimal weights.
+	That being said, we are very pleased with our results. Here's a link to our github repo, if you want to check out our code: https://github.com/billderose/KaggleCredit.
 
 \end{document}  
