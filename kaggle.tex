@@ -17,7 +17,7 @@
 \maketitle
 \section{Introduction}
 	 ~~~~Loan defaults played an integral role in the collapse of the financial industry in 2008. 
-	In the midsts of a housing bubble, banks wanted their share of the profits and so engaged in
+	In the midsts of a housing bubble, banks wanted their share of the profits and so they engaged in
 	 misdirected and extremely risky lending practices (subprime mortgages, for example, which involve lending money to borrowers with lower credit ratings). 
 	 As more banks participated in this type of lending, the competition for credit grew fierce and
 	 institutions further relaxed their standards of credit worthiness. Banks  lent too 
@@ -25,10 +25,10 @@
 	 those subprime loans were not repaid;  in the ensuing months the United States faced the 
 	 worst recession since the 1930s. 
 	 
-	 In the wake of the subprime mortgage crisis banks and regulators began paying special 
+	 In the wake of the subprime mortgage crisis, banks and regulators began paying special 
 	 attention to the risks associated with lending. Enter Kaggle's ``Give Me Some Credit" competition where
 	 we are provided with data on 150,000 loans. Among the information provided about the 
-	 borrowers are revolving utilization, monthly income, debt ratio, age, number
+	 borrowers is revolving utilization, monthly income, debt ratio, age, number
 	 of dependents, number of times late in paying loans, and number of real estate loans. 
 	 With data in hand, the task is then one of binary classification; our goal is to predict a 
 	 borrower's probability of default. 
@@ -43,9 +43,9 @@
 	
 	\subsection{Outliers}
 		After plotting our data and examining summary statistics, we noticed a number of outliers in the data. For example, someone had age 0 and another was making several million dollars in monthly income (what industry is that in, please?). The person with age 0 is easy to deal with, but 
-		in other cases we had to more judiciously choose a path of action.
-		Debt ratio was off the charts for observations
-		where monthly income was \tt NA\rm~. We proceeded to set both values to \tt NA\rm~
+		in other cases we had to more judiciously choose a path of action;
+		debt ratio was off the charts for observations
+		where monthly income was \tt NA\rm~. As such, we proceeded to set both values to \tt NA\rm~
 		if either was missing and leave the rest to imputation.
 
 	
@@ -63,7 +63,7 @@
 	When we began our work we were pleasantly surprised to see
 	one of our classifiers correctly predict $93\%$ of the observations. Upon inspection,
 	this result is nothing to be excited about; in fact, it is not much better than guessing at 
-	random because at least $93\%$ of the data are all $0$'s.
+	random because at least $93\%$ of the data are $0$'s.
 	\begin{center}
 	\includegraphics[scale=0.5]{skew}
 	\end{center}  
@@ -79,13 +79,13 @@
  	\subsection{Imputation}
 	Many individuals in the data set were missing important predictor values. 
 	Instead of ignoring blank values, and thus potentially ignoring values that could be key in 
-	classifying individuals, we decided to choose between two imputation methods: K-nearest 
-	neighbors imputation, and gradient boosting imputation. 
+	classifying individuals, we decided to choose between two imputation methods: K-Nearest 
+	Neighbors imputation, and gradient boosting imputation. 
 	
 	To evaluate the two methods, we 
-	focused on computation time and perceived accuracy of the methods. The K-Nearest Neighbor 
+	focused on computation time and perceived accuracy of the methods. The K-Nearest Neighbors 
 	computes a distance matrix, and finds a specified number of closest observations to the 
-	individual you are imputing the data for. It then finds the mean of the variable you are imputing 
+	individual we are imputing the data for. It then finds the mean of the variable we are imputing 
 	from those individuals. Unfortunately, the algorithm in R was unable to compute a distance
 	matrix for a data set of the size we are working with, which would force us to use much smaller
 	subsets to impute the data, thus decreasing the accuracy of our imputations. Gradient
@@ -96,8 +96,8 @@
 	
 	While using regression to find missing values for our data set may not have been
 	the best model, gradient boosting allowed us to use the training data to impute the missing 
-	values in the test data, and was significantly computationally less expensive than k-nearest
-	neighbors imputation. 
+	values in the test data, and was significantly computationally less expensive than K-Nearest
+	Neighbors imputation. 
 \section{Classifiers}
 In general, we did not use one single classifier. We realized that for any classifier, there were myriad
 parameters that we could try to tweak to get things exactly as we wanted. Instead, we 
@@ -110,7 +110,7 @@ Below, we discuss the specifics of each classifier and the reasons for using the
 	From our lectures
 	and research, we knew that random forests would perform well given the number of
 	observations and dimensionality of our predictor variables. In addition, they are not phased by the
-	presence of missing data; this was a concern of ours early on before we had given though
+	presence of missing data; this was a concern of ours early on before we had given much thought
 	to imputation techniques. Random forests are themselves powerful ensemble learners that 
 	use forests of decision trees to vote on the final classification label. Given their
 	ability to scale with data, excellent predictive abilities and easy of use, random forests were an obvious choice for us.
@@ -120,7 +120,7 @@ Below, we discuss the specifics of each classifier and the reasons for using the
 	power drew us towards boosting as a solution. 
 	
 	 By default, the \tt ada\rm~ package uses trees from the \tt rpart
-	\rm~library. We played around with different trees, including stumps, to use in the learning step. 	Ultimately we settled
+	\rm~library. We played around with different trees, including stumps, to use in the learning step. 	Ultimately, we settled
 	on using trees with 16 terminal nodes, a result backed by our submission results and not by
 	any sort of cross validation.
 	
@@ -131,12 +131,12 @@ Below, we discuss the specifics of each classifier and the reasons for using the
 	genetic algorithm.
 	\subsection{Genetic Algorithm}
 \section{Conclusions}
-	All in all, this project was extremely enjoyable, and presented the challenge of analyzing a vast amounts of data in figuring out the best way to predict defaults. Although the more successful methods were addressed in the various sections of this paper, we learned a lot of valuable lessons in our numerous errors.
+	All in all, this project was extremely enjoyable, and presented the challenge of analyzing a vast amount of data in figuring out the best way to predict defaults. Although the more successful methods were addressed in the various sections of this paper, we learned a lot of valuable lessons in our numerous errors.
 	
-	At first, we didn't pay much attention to the data we were dealing with, figuring that our classification methods would be able to sift through all the outliers and come to a reasonable estimate. However, after a quick set of box plots, we quickly changed our minds about the significance of our dataset, and went a little over the top by setting values of data that we found moderately sketchy to \tt NA\rm, or adjusting them down to ``more reasonable" values. After testing our results, we learned that too much data manipulating was a bad thing, and we backed off a bit once more.
+	At first, we didn't pay much attention to the data we were dealing with, figuring that our classification methods would be able to sift through all the outliers and come to a reasonable estimate. However, after a quick set of box plots, we quickly changed our minds about the significance of our dataset, and went a little over the top by setting values of data that we found moderately sketchy to \tt NA\rm, or adjusting them down to ``more reasonable" values. After testing our results, we learned that too much data manipulation was a bad thing, and we backed off a bit once more.
 	
 	
-	In terms of implementation of the code, this project gave us a great opportunity to work with a particularly interesting data set. As a result, we had to seriously consider computational complexity,(running KNNImputation, for instance, was ruled out under this criteria), a concern new to us. Learning to use imported libraries proved to be an interesting challenge: for the majority of the work in this class, we had been implementing our own algorithms in R, and working with pre-made packages required a new approach in order to get our classifiers.
+	In terms of implementation of the code, this project gave us a great opportunity to work with a particularly interesting dataset. As a result, we had to seriously consider computational complexity, (running KNNImputation, for instance, was ruled out under this criteria), a concern new to us. Learning to use imported libraries proved to be an interesting challenge: for the majority of the work in this class, we had been implementing our own algorithms in R, and working with pre-made packages required a new approach in order to get our classifiers working.
 	
 		As a group, we are extremely pleased with our performance -- having jumped from around 600th place to 149th was an incredible leap made in just a couple of days! However, as we concluded coding, we realized that with more time, there were some additional things we would have liked to try. We believe that the values that we train our data on are extremely relevant to correct classification, and thus would have liked to focus a bit more energy on imputation: although we are satisfied with how \tt gmbImpute\rm~worked for us, when we browsed the imputed values of our data, we noticed some seemingly strange outputs. Clearly, we can't be sure that these imputed values were off, but when comparing them to \tt KNNImpute\rm~(which, mind you, only could handle very small subsets of the data), we seemed to be able to better rationalize the \tt KNNImpute\rm~data than the imputed values we ended up using using. 
 		
