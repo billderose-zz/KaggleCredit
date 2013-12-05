@@ -21,7 +21,7 @@ Split.Data <-function(data, size) {
   # Split.Data partitions a full dataset into two smaller
   # ones that may be used for training/testing.
   n <- nrow(data)
-  prob <- ifelse(data$SeriousDlqin2yrs == 1, 0.15, 0.015)
+  prob <- ifelse(data$SeriousDlqin2yrs == 1, 0.20, 0.015)
   prob.sampled <- data[sample(n, n / size, prob = prob, replace = TRUE), ] 
   return(prob.sampled)
 }
